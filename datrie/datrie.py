@@ -16,7 +16,8 @@ class SearchState:
     prefix = None
     index = None
     finished_at_state = None
-    result = None
+    match_state = None
+    next = None
 
 
 class DoubleArrayTrie(object):
@@ -278,20 +279,3 @@ class DoubleArrayTrie(object):
 
     def remove(self, inputs):
         return self._remove_from_trie(self._create_unicode(inputs))
-
-
-if __name__ == "__main__":
-    datrie = DoubleArrayTrie()
-    print(datrie.base)
-    print(datrie.check)
-    print()
-
-    datrie.put("a")
-    print(datrie.base)
-    print(datrie.check)
-    print()
-
-    datrie.put("ad")
-    print(datrie.base)
-    print(datrie.check)
-    print()
