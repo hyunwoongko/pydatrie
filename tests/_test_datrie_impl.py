@@ -1,24 +1,23 @@
-from datrie._datrie_impl import DoubleArrayTrie
+from pydatrie._datrie_impl import DoubleArrayTrie
 
 if __name__ == "__main__":
     trie = DoubleArrayTrie(
         {
-            "아버지": "NNG",
-            "가": "JKS",
-            "방": "NNG",
-            "에": "JKB",
-            "들어오": "VV",
-            "신다": "EP+EF",
-            ".": "SP",
+            "AB": "1",
+            "ABCD": "2",
+            "EF": "3",
+            "EFGH": "4",
         }
     )
 
-    print(trie["아버지"])  # NNG
-    print(trie["신다"])  # EP+EF
+    print(trie["AB"])  # 1
+    print(trie["EF"])  # 3
+    print(trie.get("ABCD", prefix_search=True))  # ['1', '2']
+    print(trie.get("EFGH", prefix_search=True))  # ['3', '4']
 
     filename = "file.dat"
     trie.save(filename)
 
     trie2 = DoubleArrayTrie.load(filename)
-    print(trie2["아버지"])  # NNG
-    print(trie2["신다"])  # EP+EF
+    print(trie2["AB"])  # 1
+    print(trie2["EF"])  # 3

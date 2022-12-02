@@ -1,4 +1,4 @@
-from datrie._datrie_simple import SimpleDoubleArrayTrie
+from pydatrie._datrie_simple import SimpleDoubleArrayTrie
 
 if __name__ == "__main__":
     trie = SimpleDoubleArrayTrie()

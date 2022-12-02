@@ -43,31 +43,6 @@ class DoubleArrayTrie:
         if data is not None:
             self.build_with_dict(data)
 
-    def get_unit_size(self) -> int:
-        return self.UNIT_SIZE
-
-    def get_size(self) -> int:
-        return self.size
-
-    def get_total_size(self) -> int:
-        return self.size * self.UNIT_SIZE
-
-    def get_nonzero_size(self) -> int:
-        result = 0
-        for i in range(len(self.check)):
-            if self.check[i] != 0:
-                result += 1
-        return result
-
-    def size(self) -> int:
-        return len(self.v)
-
-    def get_check(self) -> List[int]:
-        return self.check
-
-    def get_base(self) -> List[int]:
-        return self.base
-
     def build_with_keys(self, keys: List[str]) -> int:
         assert len(keys) > 0
         return self._build(keys, None, None, len(keys))
@@ -100,7 +75,7 @@ class DoubleArrayTrie:
         self.value = _value
         self.progress = 0
 
-        self.resize(65536 * 32)
+        self._resize(65536 * 32)
 
         self.base[0] = 1
         self.next_check_pos = 0
@@ -111,8 +86,8 @@ class DoubleArrayTrie:
         root_node.depth = 0
 
         siblings: List[Node] = []
-        self.fetch(root_node, siblings)
-        self.insert(siblings)
+        self._fetch(root_node, siblings)
+        self._insert(siblings)
 
         self.used = None
         self.key = None
@@ -120,7 +95,7 @@ class DoubleArrayTrie:
 
         return self.error
 
-    def resize(self, new_size: int) -> int:
+    def _resize(self, new_size: int) -> int:
         new_base: List[int] = [0] * new_size
         new_check: List[int] = [0] * new_size
         new_used: List[bool] = [False] * new_size
@@ -136,7 +111,7 @@ class DoubleArrayTrie:
         self.alloc_size = new_size
         return self.alloc_size
 
-    def fetch(self, parent: Node, siblings: List[Node]) -> int:
+    def _fetch(self, parent: Node, siblings: List[Node]) -> int:
         if self.error < 0:
             return 0
 
@@ -175,7 +150,7 @@ class DoubleArrayTrie:
 
         return len(siblings)
 
-    def insert(self, siblings: List[Node]) -> int:
+    def _insert(self, siblings: List[Node]) -> int:
         if self.error < 0:
             return 0
 
@@ -185,13 +160,13 @@ class DoubleArrayTrie:
         first = 0
 
         if self.alloc_size <= pos:
-            self.resize(pos + 1)
+            self._resize(pos + 1)
 
         while True:
             pos += 1
 
             if self.alloc_size <= pos:
-                self.resize(pos + 1)
+                self._resize(pos + 1)
 
             if self.check[pos] not in [0, None]:
                 nonzero_num += 1
@@ -208,7 +183,7 @@ class DoubleArrayTrie:
                     if (1.05 > 1.0 * self.key_size / (self.progress + 1))
                     else 1.0 * self.key_size / (self.progress + 1)
                 )
-                self.resize(int(self.alloc_size * l))
+                self._resize(int(self.alloc_size * l))
 
             if self.used[begin]:
                 continue
@@ -238,7 +213,7 @@ class DoubleArrayTrie:
 
         for i in range(len(siblings)):
             new_siblings: List[Node] = []
-            if self.fetch(siblings[i], new_siblings) == 0:
+            if self._fetch(siblings[i], new_siblings) == 0:
                 self.base[begin + siblings[i].code] = (
                     -self.value[siblings[i].left] - 1
                     if self.value is not None
@@ -253,15 +228,12 @@ class DoubleArrayTrie:
 
                 self.progress += 1
             else:
-                h: int = self.insert(new_siblings)
+                h: int = self._insert(new_siblings)
                 self.base[begin + siblings[i].code] = h
 
         return begin
 
-    def add_all(self, siblings: List[Node]) -> int:
-        return self.insert(siblings)
-
-    def exact_match_search(
+    def _exact_match_search(
         self, key: str, pos: int = 0, _len: int = 0, node_pos: int = 0
     ):
         if _len <= 0:
@@ -288,7 +260,7 @@ class DoubleArrayTrie:
             result = -n - 1
         return result
 
-    def common_prefix_search(
+    def _common_prefix_search(
         self, key: str, pos: int = 0, _len: int = 0, node_pos: int = 0
     ):
         if _len <= 0:
@@ -317,44 +289,17 @@ class DoubleArrayTrie:
 
         return result
 
-    def common_prefix_search_with_value(self, key: str):
-        _len = len(key)
-        result: List[Tuple[str, Any]] = []
-        key_chars: List[str] = [c for c in key]
-        b: int = self.base[0]
-        n: int
-        p: int
-
-        for i in range(_len):
-            p = b
-            n = self.base[p]
-            if b == self.check[p] and n < 0:
-                result.append(("".join(key_chars[0:i]), self.v[-n - 1]))
-
-            p = b + ord(key_chars[i]) + 1
-            if b == self.check[p]:
-                b = self.base[p]
-            else:
-                return result
-
-        p = b
-        n = self.base[p]
-        if b == self.check[p] and n < 0:
-            result.append((key, self.v[-n - 1]))
-
-        return result
-
     def _get_value(self, index) -> Any:
         return self.v[index]
 
     def get(self, key, prefix_search=False) -> Any:
         if prefix_search:
-            indices = self.common_prefix_search(key)
+            indices = self._common_prefix_search(key)
             results = [self._get_value(i) for i in indices if i >= 0]
             if len(results) != 0:
                 return results
         else:
-            index = self.exact_match_search(key)
+            index = self._exact_match_search(key)
             if index >= 0:
                 return self._get_value(index)
         return None
