@@ -20,7 +20,7 @@ class SearchState:
     next = None
 
 
-class DoubleArrayTrie(object):
+class SinpleDoubleArrayTrie(object):
     def __init__(self, alphabet_length=256):
         super().__init__()
         self.alphabet_length = alphabet_length
@@ -268,11 +268,11 @@ class DoubleArrayTrie(object):
             return False
 
     @staticmethod
-    def _create_unicode(inputs):
+    def _create_unicode(inputs, values=None):
         return [ord(s) - ord("a") for s in inputs]
 
-    def put(self, inputs):
-        self._add_to_trie(self._create_unicode(inputs))
+    def put(self, inputs, values):
+        self._add_to_trie(self._create_unicode(inputs, values))
 
     def find(self, inputs):
         return self._contains_prefix(self._create_unicode(inputs))

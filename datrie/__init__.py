@@ -1,4 +1,3 @@
-from numba.typed import List
+from datrie._datrie_impl import DoubleArrayTrie
 
-a = List([1])
-print(a)
+__ALL__ = [DoubleArrayTrie]
