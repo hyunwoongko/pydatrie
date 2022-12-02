@@ -23,11 +23,9 @@ class DoubleArrayTrie(object):
     def __init__(self, alphabet_length=256):
         super().__init__()
         self.alphabet_length = alphabet_length
-        self.base = []
-        self.check = []
         self.free_positions = SortedSet()
-        self.base.append(INITIAL_ROOT_BASE)
-        self.check.append(ROOT_CHECK_VALUE)
+        self.base = [INITIAL_ROOT_BASE]
+        self.check = [ROOT_CHECK_VALUE]
 
     def get_alphabet_size(self):
         return self.alphabet_length
