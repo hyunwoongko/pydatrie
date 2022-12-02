@@ -1,4 +1,3 @@
-import mmap
 from typing import List, Any, Tuple, Dict
 
 
@@ -352,7 +351,6 @@ class DoubleArrayTrie:
         return None
 
     def save(self, filename: str):
-        import pandas as pd
 
         data = self.__dict__
         check = self.check
