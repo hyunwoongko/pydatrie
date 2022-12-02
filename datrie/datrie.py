@@ -27,17 +27,8 @@ class DoubleArrayTrie(object):
         self.base = [INITIAL_ROOT_BASE]
         self.check = [ROOT_CHECK_VALUE]
 
-    def get_alphabet_size(self):
-        return self.alphabet_length
-
-    def get_size(self):
+    def size(self):
         return len(self.base)
-
-    def get_base(self, position):
-        return self.base[position]
-
-    def get_check(self, position):
-        return self.check[position]
 
     def set_base(self, position, value):
         self.base[position] = value
@@ -57,7 +48,7 @@ class DoubleArrayTrie(object):
 
     def _next_available_hop(self, for_value):
         while self.free_positions.bisect_right(for_value) >= len(self.free_positions):
-            self._ensure_reachable_index(self.get_size() + 1)
+            self._ensure_reachable_index(self.size() + 1)
 
         result = (
             self.free_positions[self.free_positions.bisect_right(for_value)] - for_value
@@ -67,10 +58,10 @@ class DoubleArrayTrie(object):
         return result
 
     def _ensure_reachable_index(self, limit):
-        while self.get_size() <= limit:
+        while self.size() <= limit:
             self.base.append(EMPTY_VALUE)
             self.check.append(EMPTY_VALUE)
-            self.free_positions.add(self.get_size() - 1)
+            self.free_positions.add(self.size() - 1)
 
     def _find_consecutive_free(self, amount: int):
         assert amount >= 0
@@ -111,8 +102,8 @@ class DoubleArrayTrie(object):
         if possible - min_value >= 0:
             return possible - min_value
 
-        self._ensure_reachable_index(self.get_size() + needed_positions)
-        return self.get_size() - needed_positions - min_value
+        self._ensure_reachable_index(self.size() + needed_positions)
+        return self.size() - needed_positions - min_value
 
     def _add_to_trie(self, inputs):
         changed = False
@@ -123,19 +114,19 @@ class DoubleArrayTrie(object):
         while i < len(inputs):
             assert state >= 0
             c = inputs[i]
-            state_base = self.get_base(state)
+            state_base = self.base[state]
 
             if i > 0 and state_base == LEAF_BASE_VALUE:
                 self.set_base(transition, self._next_available_hop(c))
                 changed = True
             else:
-                assert self.get_base(state) >= 0
+                assert self.base[state] >= 0
 
             transition = self._walk(state, c)
             assert transition > 0
 
             self._ensure_reachable_index(transition)
-            if self.get_check(transition) == EMPTY_VALUE:
+            if self.check[transition] == EMPTY_VALUE:
                 self.set_check(transition, state)
                 if i == len(inputs) - 1:
                     self.set_base(transition, LEAF_BASE_VALUE)
@@ -144,7 +135,7 @@ class DoubleArrayTrie(object):
                     self.set_base(transition, self._next_available_hop(inputs[i + 1]))
                     changed = True
             else:
-                if self.get_check(transition) != state:
+                if self.check[transition] != state:
                     self._resolve_conflict(state, c)
                     changed = True
                     continue
@@ -159,7 +150,7 @@ class DoubleArrayTrie(object):
 
         for c in range(self.alphabet_length):
             temp_next = self._walk(s, c)
-            if 0 <= temp_next < self.get_size() and self.get_check(temp_next) == s:
+            if 0 <= temp_next < self.size() and self.check[temp_next] == s:
                 values.add(c)
 
         new_location = self._next_available_move(values)
@@ -168,26 +159,26 @@ class DoubleArrayTrie(object):
         for i in range(len(values)):
             c = values[i]
             temp_next = self._walk(s, c)
-            assert temp_next < self.get_size()
-            assert self.get_check(temp_next) == s
-            assert self.get_check(new_location + c) == EMPTY_VALUE
+            assert temp_next < self.size()
+            assert self.check[temp_next] == s
+            assert self.check[new_location + c] == EMPTY_VALUE
             self.set_check(new_location + c, s)
 
-            assert self.get_base(new_location + c) == EMPTY_VALUE
-            self.set_base(new_location + c, self.get_base(self._walk(s, c)))
+            assert self.base[new_location + c] == EMPTY_VALUE
+            self.set_base(new_location + c, self.base[self._walk(s, c)])
             self._update_child_move(s, c)
 
-            if self.get_base(self._walk(s, c)) != LEAF_BASE_VALUE:
+            if self.base[self._walk(s, c)] != LEAF_BASE_VALUE:
                 for d in range(self.alphabet_length):
                     temp = self._walk(s, c)
                     temp_next_child = self._walk(temp, d)
-                    if temp_next_child < self.get_size() and self.get_check(
+                    if temp_next_child < self.size() and self.check[
                         temp_next_child
-                    ) == self._walk(s, c):
+                    ] == self._walk(s, c):
                         temp = self._walk(s, c)
                         self.set_check(self._walk(temp, d), new_location + c)
 
-                    elif temp_next >= self.get_size():
+                    elif temp_next >= self.size():
                         break
 
                 self.set_base(self._walk(s, c), EMPTY_VALUE)
@@ -196,14 +187,14 @@ class DoubleArrayTrie(object):
         self.set_base(s, new_location)
 
     def _is_walkable(self, state: int, c: int):
-        if not (state < self.get_size()):
+        if not (state < self.size()):
             return False
 
         transition = self._walk(state, c)
-        return transition < self.get_size() and self.get_check(transition) == state
+        return transition < self.size() and self.check[transition] == state
 
     def _walk(self, state: int, c: int):
-        return self.get_base(state) + c
+        return self.base[state] + c
 
     def _contains_prefix(self, prefix):
         return self._run_prefix(prefix).result
@@ -222,7 +213,7 @@ class DoubleArrayTrie(object):
             transition = self._walk(state, current)
 
             if self._is_walkable(state, current):
-                if self.get_base(transition) == LEAF_BASE_VALUE:
+                if self.base[transition] == LEAF_BASE_VALUE:
                     if i == len(prefix) - 1:
                         result.result = SearchResult.PERFECT_MATCH
                         break
@@ -242,7 +233,7 @@ class DoubleArrayTrie(object):
         return result
 
     def _update_child_move(self, parent_index, for_character):
-        assert self.get_check(self._walk(parent_index, for_character)) == parent_index
+        assert self.check[self._walk(parent_index, for_character)] == parent_index
 
     def _remove_from_trie(self, inputs):
         if self._contains_prefix(inputs) == SearchResult.PERFECT_MATCH:
