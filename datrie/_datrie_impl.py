@@ -32,13 +32,16 @@ class DoubleArrayTrie:
     max_length: int
     error: int
 
-    def __init__(self):
+    def __init__(self, data: Dict[str, Any] = None):
         self.check = None
         self.base = None
         self.used = None
         self.size = 0
         self.alloc_size = 0
         self.error = 0
+
+        if data is not None:
+            self.build_with_dict(data)
 
     def get_unit_size(self) -> int:
         return self.UNIT_SIZE
@@ -341,21 +344,23 @@ class DoubleArrayTrie:
 
         return result
 
-    def get_value(self, index) -> Any:
+    def _get_value(self, index) -> Any:
         return self.v[index]
 
-    def get(self, key) -> Any:
-        index = self.exact_match_search(key)
-        if index >= 0:
-            return self.get_value(index)
+    def get(self, key, prefix_search=False) -> Any:
+        if prefix_search:
+            indices = self.common_prefix_search(key)
+            results = [self._get_value(i) for i in indices if i >= 0]
+            if len(results) != 0:
+                return results
+        else:
+            index = self.exact_match_search(key)
+            if index >= 0:
+                return self._get_value(index)
         return None
 
-    def save(self, filename: str):
-
-        data = self.__dict__
-        check = self.check
-        print(data.keys())
-        print(len(check))
+    def __getitem__(self, item: str) -> Any:
+        return self.get(item)
 
     def save(self, filename: str):
         import pickle
@@ -364,7 +369,7 @@ class DoubleArrayTrie:
             pickle.dump(self.__dict__, fp)
 
     @classmethod
-    def load(cls, filename: str):
+    def load(cls, filename: str) -> "DoubleArrayTrie":
         import pickle
 
         with open(filename, mode="rb") as fp:

@@ -20,7 +20,7 @@ class SearchState:
     next = None
 
 
-class SinpleDoubleArrayTrie(object):
+class SimpleDoubleArrayTrie(object):
     def __init__(self, alphabet_length=256):
         super().__init__()
         self.alphabet_length = alphabet_length
@@ -28,10 +28,10 @@ class SinpleDoubleArrayTrie(object):
         self.base = [INITIAL_ROOT_BASE]
         self.check = [ROOT_CHECK_VALUE]
 
-    def size(self):
+    def _size(self):
         return len(self.base)
 
-    def set_base(self, position, value):
+    def _set_base(self, position, value):
         self.base[position] = value
         if value == EMPTY_VALUE:
             self.free_positions.add(position)
@@ -39,7 +39,7 @@ class SinpleDoubleArrayTrie(object):
             if position in self.free_positions:
                 self.free_positions.remove(position)
 
-    def set_check(self, position, value):
+    def _set_check(self, position, value):
         self.check[position] = value
         if value == EMPTY_VALUE:
             self.free_positions.add(position)
@@ -49,7 +49,7 @@ class SinpleDoubleArrayTrie(object):
 
     def _next_available_hop(self, for_value):
         while self.free_positions.bisect_right(for_value) >= len(self.free_positions):
-            self._ensure_reachable_index(self.size() + 1)
+            self._ensure_reachable_index(self._size() + 1)
 
         result = (
             self.free_positions[self.free_positions.bisect_right(for_value)] - for_value
@@ -59,10 +59,10 @@ class SinpleDoubleArrayTrie(object):
         return result
 
     def _ensure_reachable_index(self, limit):
-        while self.size() <= limit:
+        while self._size() <= limit:
             self.base.append(EMPTY_VALUE)
             self.check.append(EMPTY_VALUE)
-            self.free_positions.add(self.size() - 1)
+            self.free_positions.add(self._size() - 1)
 
     def _find_consecutive_free(self, amount: int):
         assert amount >= 0
@@ -103,8 +103,8 @@ class SinpleDoubleArrayTrie(object):
         if possible - min_value >= 0:
             return possible - min_value
 
-        self._ensure_reachable_index(self.size() + needed_positions)
-        return self.size() - needed_positions - min_value
+        self._ensure_reachable_index(self._size() + needed_positions)
+        return self._size() - needed_positions - min_value
 
     def _add_to_trie(self, inputs):
         changed = False
@@ -118,7 +118,7 @@ class SinpleDoubleArrayTrie(object):
             state_base = self.base[state]
 
             if i > 0 and state_base == LEAF_BASE_VALUE:
-                self.set_base(transition, self._next_available_hop(c))
+                self._set_base(transition, self._next_available_hop(c))
                 changed = True
             else:
                 assert self.base[state] >= 0
@@ -128,12 +128,12 @@ class SinpleDoubleArrayTrie(object):
 
             self._ensure_reachable_index(transition)
             if self.check[transition] == EMPTY_VALUE:
-                self.set_check(transition, state)
+                self._set_check(transition, state)
                 if i == len(inputs) - 1:
-                    self.set_base(transition, LEAF_BASE_VALUE)
+                    self._set_base(transition, LEAF_BASE_VALUE)
                     changed = True
                 else:
-                    self.set_base(transition, self._next_available_hop(inputs[i + 1]))
+                    self._set_base(transition, self._next_available_hop(inputs[i + 1]))
                     changed = True
             else:
                 if self.check[transition] != state:
@@ -151,7 +151,7 @@ class SinpleDoubleArrayTrie(object):
 
         for c in range(self.alphabet_length):
             temp_next = self._walk(s, c)
-            if 0 <= temp_next < self.size() and self.check[temp_next] == s:
+            if 0 <= temp_next < self._size() and self.check[temp_next] == s:
                 values.add(c)
 
         new_location = self._next_available_move(values)
@@ -160,39 +160,39 @@ class SinpleDoubleArrayTrie(object):
         for i in range(len(values)):
             c = values[i]
             temp_next = self._walk(s, c)
-            assert temp_next < self.size()
+            assert temp_next < self._size()
             assert self.check[temp_next] == s
             assert self.check[new_location + c] == EMPTY_VALUE
-            self.set_check(new_location + c, s)
+            self._set_check(new_location + c, s)
 
             assert self.base[new_location + c] == EMPTY_VALUE
-            self.set_base(new_location + c, self.base[self._walk(s, c)])
+            self._set_base(new_location + c, self.base[self._walk(s, c)])
             self._update_child_move(s, c)
 
             if self.base[self._walk(s, c)] != LEAF_BASE_VALUE:
                 for d in range(self.alphabet_length):
                     temp = self._walk(s, c)
                     temp_next_child = self._walk(temp, d)
-                    if temp_next_child < self.size() and self.check[
+                    if temp_next_child < self._size() and self.check[
                         temp_next_child
                     ] == self._walk(s, c):
                         temp = self._walk(s, c)
-                        self.set_check(self._walk(temp, d), new_location + c)
+                        self._set_check(self._walk(temp, d), new_location + c)
 
-                    elif temp_next >= self.size():
+                    elif temp_next >= self._size():
                         break
 
-                self.set_base(self._walk(s, c), EMPTY_VALUE)
-                self.set_check(self._walk(s, c), EMPTY_VALUE)
+                self._set_base(self._walk(s, c), EMPTY_VALUE)
+                self._set_check(self._walk(s, c), EMPTY_VALUE)
 
-        self.set_base(s, new_location)
+        self._set_base(s, new_location)
 
     def _is_walkable(self, state: int, c: int):
-        if not (state < self.size()):
+        if not (state < self._size()):
             return False
 
         transition = self._walk(state, c)
-        return transition < self.size() and self.check[transition] == state
+        return transition < self._size() and self.check[transition] == state
 
     def _walk(self, state: int, c: int):
         return self.base[state] + c
@@ -260,19 +260,19 @@ class SinpleDoubleArrayTrie(object):
             for i in range(delete_from_index, len(inputs)):
                 c = inputs[i]
                 transition = self._walk(state, c)
-                self.set_base(state, EMPTY_VALUE)
-                self.set_base(state, EMPTY_VALUE)
+                self._set_base(state, EMPTY_VALUE)
+                self._set_base(state, EMPTY_VALUE)
                 state = transition
             return True
         else:
             return False
 
     @staticmethod
-    def _create_unicode(inputs, values=None):
-        return [ord(s) - ord("a") for s in inputs]
+    def _create_unicode(inputs):
+        return [s for s in inputs.encode("utf-8")]
 
-    def put(self, inputs, values):
-        self._add_to_trie(self._create_unicode(inputs, values))
+    def put(self, inputs):
+        self._add_to_trie(self._create_unicode(inputs))
 
     def find(self, inputs):
         return self._contains_prefix(self._create_unicode(inputs))
