@@ -8,7 +8,7 @@ INITIAL_ROOT_BASE = 1
 
 class SearchResult:
     PERFECT_MATCH = "PERFECT_MATCH"
-    PREFIX = "PREFIX"
+    PARTIAL_MATCH = "PARTIAL_MATCH"
     NOT_FOUND = "NOT_FOUND"
 
 
@@ -204,7 +204,7 @@ class DoubleArrayTrie(object):
         i = 0
         result = SearchState()
         result.prefix = prefix
-        result.result = SearchResult.PREFIX
+        result.result = SearchResult.PARTIAL_MATCH
 
         while i < len(prefix):
             current = prefix[i]
@@ -268,7 +268,7 @@ class DoubleArrayTrie(object):
 
     @staticmethod
     def _create_unicode(inputs):
-        return [s for s in inputs.encode("utf-8")]
+        return [ord(s) - ord("a") for s in inputs]
 
     def put(self, inputs):
         self._add_to_trie(self._create_unicode(inputs))
@@ -282,14 +282,16 @@ class DoubleArrayTrie(object):
 
 if __name__ == "__main__":
     datrie = DoubleArrayTrie()
-    datrie.put("안녕 반가워")
-    datrie.put("잘가요")
-    datrie.put("햄버거 먹고싶다")
+    print(datrie.base)
+    print(datrie.check)
+    print()
 
-    print(f"안녕 반가워: {datrie.find('안녕 반가워')}")
-    print(f"잘가: {datrie.find('잘가')}")
-    print(f"햄버거: {datrie.find('햄버거')}")
-    print(f"햄버거 먹고싶다: {datrie.find('햄버거 먹고싶다')}")
+    datrie.put("a")
+    print(datrie.base)
+    print(datrie.check)
+    print()
 
-    datrie.remove("햄버거 먹고싶다")
-    print(f"햄버거 먹고싶다: {datrie.find('햄버거 먹고싶다')}")
+    datrie.put("ad")
+    print(datrie.base)
+    print(datrie.check)
+    print()
