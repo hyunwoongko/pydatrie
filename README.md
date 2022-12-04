@@ -11,6 +11,7 @@ pip install pydatrie
 from pydatrie import DoubleArrayTrie
 
 # creation datrie
+# input data type is Dict[str, Any]
 trie = DoubleArrayTrie(
     {
         "AB": "1",

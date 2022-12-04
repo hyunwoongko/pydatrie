@@ -1,4 +1,4 @@
-from pydatrie._datrie_impl import DoubleArrayTrie
+from pydatrie._datrie import DoubleArrayTrie
 
 __ALL__ = [DoubleArrayTrie]
 __version__ = "0.1"
