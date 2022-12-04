@@ -1,12 +1,11 @@
-import codecs
 import os
 
 from setuptools import setup, find_packages
 
-
 version = None
 author = None
-with open(os.path.join("kss", "__init__.py"), encoding="utf-8") as f:
+
+with open(os.path.join("pydatrie", "__init__.py"), encoding="utf-8") as f:
     for line in f:
         if line.strip().startswith("__version__"):
             version = line.split("=")[1].strip().replace('"', "").replace("'", "")
