@@ -89,7 +89,7 @@ trie.shortest_prefix_item("EFG")
 "EFG" in trie
 # False
 
-# check trie has any key which starts with given prefix using `has_prefix`
+# check trie has any prefix using `has_prefix`
 trie.has_prefix("EF")
 # True
 trie.has_prefix("EFG")
