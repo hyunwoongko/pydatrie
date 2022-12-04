@@ -1,12 +1,12 @@
 # Pydatrie
 Pydatire is a pure python implementation of DARTS (Double ARray Trie System). 
-It was introduced by Aoe at 1989 and used for main data structure of [`mecab`](https://github.com/taku910/mecab), one of the most famous Japenese morpheme analyzer.
+It was introduced by Aoe at 1989 and was used for main data structure of [`mecab`](https://github.com/taku910/mecab), one of the most famous Japenese morpheme analyzer.
 I ported [java implementation of this](https://github.com/zhaoshiyu/SEANLP/blob/master/src/main/java/cn/edu/kmust/seanlp/collection/trie/DATrie.java) 
 to python and added many features like searching keys and values by given prefix.
 
 I started this project to make pure python Korean mecab analyzer which was named `pecab`.
 But sadly I can't find pure python implementation of DARTS, so I also made this package.
-You can also see the `pecab` project [here](https://github.com/hyunwoongko/pecab).
+You can see the `pecab` project [here](https://github.com/hyunwoongko/pecab).
 
 ## Installation
 ```
