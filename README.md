@@ -104,8 +104,8 @@ trie.has_keys_with_prefix("X")
 # search all the keys starts with given prefix using `keys`
 trie.keys()
 # ['AB', 'ABCD', 'EF', 'EFGH']
-trie.keys("A")
-# ['ABCD', 'AB']
+print(trie.keys("A"))
+# ['AB', 'ABCD']
 trie.keys("ABC")
 # ['ABCD']
 
@@ -113,7 +113,7 @@ trie.keys("ABC")
 trie.values()
 # ['1', '2', '3', '4']
 trie.values("A")
-# ['2', '1']
+# ['1', '2']
 trie.values("ABC")
 # ['2']
 
@@ -121,7 +121,7 @@ trie.values("ABC")
 trie.items()
 # [('AB', '1'), ('ABCD', '2'), ('EF', '3'), ('EFGH', '4')]
 trie.items("A")
-# [('ABCD', '2'), ('AB', '1')]
+# [('AB', '1'), ('ABCD', '2')]
 trie.items("ABC")
 # [('ABCD', '2')]
 
@@ -129,7 +129,7 @@ trie.items("ABC")
 trie.suffixes()
 # ['AB', 'ABCD', 'EF', 'EFGH']
 trie.suffixes("A")
-# ['BCD', 'B']
+# ['B', 'BCD']
 
 # check the size of trie using `__len__`
 len(trie)
@@ -142,7 +142,7 @@ trie.save("file.dat")
 trie2 = DoubleArrayTrie.load("file.dat")
 trie2.items()
 # [('AB', '1'), ('ABCD', '2'), ('EF', '3'), ('EFGH', '4')]
-# it works same with original trie object!
+# it works same with original object!
 
 # check sameness of two tries using `__eq__`
 trie == trie2
@@ -160,7 +160,7 @@ for key in trie:
 # EF
 # EFGH
 
-# modify value of given key using `modify_value`
+# modify value matched with given key using `modify_value`
 trie.modify_value("AB", "99")
 trie.items()
 # [('AB', '99'), ('ABCD', '2'), ('EF', '3'), ('EFGH', '4')]

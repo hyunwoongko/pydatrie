@@ -302,7 +302,7 @@ class DoubleArrayTrie:
         inputs = [{"b": b, "key": key}]
         outputs = []
         self._search_recursive(inputs[0], outputs, with_value)
-        return outputs
+        return list(reversed(outputs))
 
     def _has_keys_with_prefix(
         self,
