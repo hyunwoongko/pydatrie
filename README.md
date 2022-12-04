@@ -13,9 +13,9 @@ You can also see the `pecab` project [here](https://github.com/hyunwoongko/pecab
 pip install pydatrie
 ```
 
-## Usage
-The usages were inspired by [`datrie`](https://github.com/pytries/datrie) package,
-please check the details with the following code script.
+## Usages
+The usages were inspired by [`datrie`](https://github.com/pytries/datrie) package, a python wrapper of [libdatrie](https://github.com/tlwg/libdatrie).
+Please check the details from the following code script.
 
 ```python
 from pydatrie import DoubleArrayTrie
