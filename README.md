@@ -14,7 +14,7 @@ pip install pydatrie
 ```
 
 ## Usages
-The usages were inspired by [`datrie`](https://github.com/pytries/datrie) package, a python wrapper of [libdatrie](https://github.com/tlwg/libdatrie).
+The usages were inspired by [`datrie`](https://github.com/pytries/datrie) package, a python wrapper of [`libdatrie`](https://github.com/tlwg/libdatrie).
 Please check the details from the following code script.
 
 ```python
