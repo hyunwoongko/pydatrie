@@ -84,7 +84,7 @@ trie.has_keys_with_prefix("X")
 # search all the keys starts with given prefix using `keys`
 trie.keys()
 # ['AB', 'ABCD', 'EF', 'EFGH']
-print(trie.keys("A"))
+trie.keys("A")
 # ['AB', 'ABCD']
 trie.keys("ABC")
 # ['ABCD']
