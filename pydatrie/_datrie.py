@@ -290,16 +290,16 @@ class DoubleArrayTrie:
                 else:
                     outputs.append(node["key"])
 
-    def _search(self, key: str, with_value: bool = False):
-        len_key = len(key)
+    def _search(self, prefix: str, with_value: bool = False):
+        len_key = len(prefix)
         b = self._base[0]
 
         for i in range(len_key - 1):
-            p = b + ord(key[i]) + 1
+            p = b + ord(prefix[i]) + 1
             if b == self._check[p]:
                 b = self._base[p]
 
-        inputs = [{"b": b, "key": key}]
+        inputs = [{"b": b, "key": prefix}]
         outputs = []
         self._search_recursive(inputs[0], outputs, with_value)
         return list(reversed(outputs))
@@ -404,7 +404,12 @@ class DoubleArrayTrie:
     def suffixes(self, prefix: str = None):
         if prefix is None or len(prefix) == 0:
             return self._key
-        return [keys[len(prefix) :] for keys in self._search(prefix, with_value=False)]
+        suffixes = []
+        for key in self._search(prefix, with_value=False):
+            suffix = key[len(prefix): ]
+            if len(suffix) != 0:
+                suffixes.append(suffix)
+        return suffixes
 
     def save(self, filename: str):
         import pickle
