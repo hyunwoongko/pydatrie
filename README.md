@@ -5,7 +5,7 @@ I ported [java implementation of this](https://github.com/zhaoshiyu/SEANLP/blob/
 to python and added many features like searching keys and values by given prefix.
 
 I started this project to make pure python Korean mecab analyzer which was named `pecab`.
-But sadly I can't find pure python implementation of DARTS, so I also made this package.
+But sadly I could not find pure python implementation of DARTS, so I also made this package myself.
 You can see the `pecab` project [here](https://github.com/hyunwoongko/pecab).
 
 ## Installation
